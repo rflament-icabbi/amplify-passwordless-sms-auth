@@ -20,14 +20,10 @@ export class AnswerChallengeComponent implements OnInit, OnDestroy, AfterContent
   digit2 = new FormControl('');
   digit3 = new FormControl('');
   digit4 = new FormControl('');
-  digit5 = new FormControl('');
-  digit6 = new FormControl('');
   @ViewChild('digit1el') digit1element: ElementRef;
   @ViewChild('digit2el') digit2element: ElementRef;
   @ViewChild('digit3el') digit3element: ElementRef;
   @ViewChild('digit4el') digit4element: ElementRef;
-  @ViewChild('digit5el') digit5element: ElementRef;
-  @ViewChild('digit6el') digit6element: ElementRef;
 
   private errorMessage_ = new BehaviorSubject('');
   public errorMessage = this.errorMessage_.asObservable();
@@ -50,7 +46,7 @@ export class AnswerChallengeComponent implements OnInit, OnDestroy, AfterContent
       .then(param => this.sms_.next(param.sms));
 
     // Move focus to next field upon entry of a digit
-    [2, 3, 4, 5, 6].forEach(digit => {
+    [2, 3, 4].forEach(digit => {
       const prev = this[`digit${digit - 1}`] as FormControl;
       const next = this[`digit${digit}element`] as ElementRef;
       this.allSubscriptions.add(prev.valueChanges.pipe(
@@ -69,13 +65,11 @@ export class AnswerChallengeComponent implements OnInit, OnDestroy, AfterContent
       this.digit1.valueChanges.pipe(
         tap(value => {
           if (value && value.length > 1) {
-            const digits = value.split('').slice(0, 6);
+            const digits = value.split('').slice(0, 4);
             this.digit1.setValue(digits[0]);
             this.digit2.setValue(digits[1]);
             this.digit3.setValue(digits[2]);
             this.digit4.setValue(digits[3]);
-            this.digit5.setValue(digits[4]);
-            this.digit6.setValue(digits[5]);
           }
         })
       ).subscribe()
@@ -94,7 +88,7 @@ export class AnswerChallengeComponent implements OnInit, OnDestroy, AfterContent
     try {
       this.errorMessage_.next('');
       this.busy_.next(true);
-      const answer = [1, 2, 3, 4, 5, 6]
+      const answer = [1, 2, 3, 4]
         .map(digit => (this[`digit${digit}`] as FormControl).value)
         .join('');
       const loginSucceeded = await this.auth.answerCustomChallenge(answer);
